@@ -1,0 +1,176 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Calculator
+{
+    public partial class Form1 : Form
+    {
+        double resultValue = 0; // det måste vara double
+        
+        string operationperformed = "";
+        bool isOperationPerformed = false;
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button_Click(object sender, EventArgs e)
+        {
+
+            if ((textBox_Result.Text == "0") || (isOperationPerformed)) // comment 1 --- första condition gör att den där nollan som finns som symbol i boxen  inte står kvar när man slår på någon button
+                textBox_Result.Clear();
+            isOperationPerformed = false;     //comment 4--- bool ska STÄMMA för att man kan trycka siffra knapper flera gånger, t.ex. man kan ha 444
+            Button button = (Button)sender;
+            if ((button.Text == ","))      //comment5--  kontrelleras att tryckas BARA EN GÅNG (,) knappen
+            
+            { if (!textBox_Result.Text.Contains(","))
+                    textBox_Result.Text = textBox_Result.Text + button.Text; //comment5 // om det inte finns redan" ,"tecken då kan du lägga till den som vanligt
+            }           
+            else
+                textBox_Result.Text = textBox_Result.Text + button.Text; //comment5 // om det fanns redan " , " tecken ska avbrytas och hoppa vidare
+            if (button.Text == "π")
+            {
+                textBox_Result.Text = textBox_Result.Text + Math.PI;
+            }
+            else if (button.Text == "e")
+            {
+                textBox_Result.Text = textBox_Result.Text + Math.E;
+            }
+            else if (button.Text == "(")
+            {
+                textBox_Result.Text = "(";
+            }
+            else if (button.Text == ")")
+            {
+                textBox_Result.Text = ")";
+            }
+        }
+          
+
+        private void operator_Click(object sender, EventArgs e)
+        {
+            if ((textBox_Result.Text == "0") || (isOperationPerformed))
+                textBox_Result.Clear();
+           
+            Button button = (Button)sender;
+            if (resultValue != 0)
+            {
+                button_Enter.PerformClick();     //Comment 2 // om det inte likar med 0 då betyder att man är i mitten av calculation, så man kan helt enkelt genomföra samma operation en efter en och 
+                operationperformed = button.Text;  // det ger samma funktion som Enter knappen             
+                label_CurrentOperation.Text = resultValue + " " + operationperformed;
+                isOperationPerformed = true;   //comment 4-- // bool ska INTE STÄMMA för att man ska kontrellera att trycka BARA EN GÅNG  operatatorer
+
+            }
+            else
+            {
+                button_Enter.PerformClick();
+                operationperformed = button.Text;
+                resultValue = double.Parse(textBox_Result.Text);  // comment3 --- det ska först konvertera till double för att vi har deklererat resultvalue som double
+                label_CurrentOperation.Text = operationperformed + "  " + resultValue;
+                isOperationPerformed = true; //comment 4-- // bool ska INTE STÄMMA för att man ska kontrellera att trycka BARA EN GÅNG  operatatorer
+            }
+        }
+
+        private void button_MoreMath(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            operationperformed = button.Text;
+            resultValue = double.Parse( textBox_Result.Text + " " + operationperformed ); //Wrong! needs to be worked on it
+            label_CurrentOperation.Text = operationperformed + "  " + resultValue;
+            isOperationPerformed = true;
+        }
+        private void button_Trigonometri(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            operationperformed = button.Text;
+            resultValue = double.Parse(textBox_Result.Text);
+            label_CurrentOperation.Text = operationperformed + "  " + resultValue;
+            isOperationPerformed = true;
+
+        }
+        private void button_C_Click(object sender, EventArgs e)
+        {
+            textBox_Result.Text = "0";
+            resultValue = 0;
+            label_CurrentOperation.Text = "0";
+        }
+
+        private void button_CE_Click(object sender, EventArgs e)
+        {
+            textBox_Result.Text = "0";
+        }
+
+        private void button_Enter_Click(object sender, EventArgs e)
+        {
+            switch(operationperformed)
+            {
+                case "+":
+                    textBox_Result.Text = (resultValue + double.Parse(textBox_Result.Text)).ToString();
+                    break;
+                case "-":
+                    textBox_Result.Text = (resultValue - double.Parse(textBox_Result.Text)).ToString();
+                    break;
+                case "/":
+                    textBox_Result.Text = (resultValue / double.Parse(textBox_Result.Text)).ToString();
+                    break;
+                case "*":
+                    textBox_Result.Text = (resultValue * double.Parse(textBox_Result.Text)).ToString();
+                  
+                    break;
+                case "1/x":
+                    textBox_Result.Text = (1/resultValue  ).ToString();
+                    break;
+                case "()^2":
+                    textBox_Result.Text = (Math.Pow(resultValue , double.Parse(textBox_Result.Text))).ToString();
+                    break;
+                case "√":
+                    textBox_Result.Text = (Math.Sqrt(resultValue)).ToString();
+                    break;
+                case "y√(x)":
+                    textBox_Result.Text = (Math.Pow(resultValue, 1/(double.Parse(textBox_Result.Text)))).ToString();
+                    break;
+                case "R":
+                    textBox_Result.Text = (Math.Round(resultValue , Int32.Parse(textBox_Result.Text))).ToString();
+                    break;
+                case "log":
+                    textBox_Result.Text = (Math.Log10(resultValue)).ToString();
+                    break;
+                  case "Ln":
+                    textBox_Result.Text = (1/(Math.Log(Math.E,resultValue))).ToString();
+                    break;
+                case "sin":
+                    textBox_Result.Text = (Math.Sin((Math.PI* resultValue)/180.0)).ToString();
+                    break;
+                case "cos":
+                    textBox_Result.Text = (Math.Cos((Math.PI * resultValue) / 180.0)).ToString();
+                    break;
+                case "Tan":
+                    textBox_Result.Text = (Math.Tan((Math.PI * resultValue) / 180.0)).ToString();
+                    break;
+                case "π":
+                    textBox_Result.Text = (Math.PI).ToString();
+                    break;
+                case "e":
+                    textBox_Result.Text = (Math.E).ToString();
+                    break;
+
+
+                default:
+                    break;
+
+            }
+            resultValue = double.Parse(textBox_Result.Text);   // Comment 2 // den hör kodblocken tillhör  comment2 - man ska skriva utanför switch loopen om man vill se den resulterande siffra utan att gör om samma sak-
+            label1_operation.Text = " ";
+        }
+
+        
+    }
+}
+// 
